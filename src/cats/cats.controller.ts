@@ -1,26 +1,20 @@
-import { Controller, Get, Header, Post, Redirect, Req } from '@nestjs/common';
-import { Request } from 'express';
+/* eslint-disable prettier/prettier */
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { CreateCatDto } from './dto/create-cat.dto';
+import { CatsService } from './cats.service';
+import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
 export class CatsController {
-  @Get() // 请求方法装饰器
-  /**
-   * 告诉Nest为请求创建处理程序,get/post方法和路由路径
-   */
-  // redirect:重定向
-  @Redirect('www.baidu.com', 301)
-  findAll(): string {
-    return 'This action returns all cats';
-  }
-
-  @Get('ab*cd')
-  text(): string {
-    return 'this is test 通配符';
-  }
+  constructor(private catsService: CatsService) {}
 
   @Post()
-  @Header('test', 'none')
-  create(): string {
-    return 'This action adds a new cat';
+  async create(@Body() createCatDto: CreateCatDto) {
+    this.catsService.create(createCatDto);
+  }
+
+  @Get()
+  async findAll(): Promise<Cat[]> {
+    return this.catsService.findAll();
   }
 }
